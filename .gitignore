@@ -1,0 +1,11 @@
+out/
+out-tests/
+*.class
+.idea/
+.vscode/
+*.iml
+# student data and generated reports stay on your computer
+data/*.csv
+reports/*.txt
+# MySQL connector jar: download it yourself (see lib/README.txt)
+lib/*.jar

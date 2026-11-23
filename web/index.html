@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Smart Performance Analytics - Teacher Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="brand">
+    <span class="brand-icon">&#128202;</span>
+    <div>
+      <strong>Smart Performance</strong><br>
+      <span>Analytics Tool</span>
+    </div>
+  </div>
+
+  <nav id="nav">
+    <button data-page="overview" class="active">&#127968; Overview</button>
+    <button data-page="students">&#128101; Students</button>
+    <button data-page="subjects">&#128218; Subjects</button>
+    <button data-page="marks">&#9998; Enter Marks</button>
+    <button data-page="ranking">&#127942; Ranking</button>
+    <button data-page="summary">&#128200; Subject Summary</button>
+    <button data-page="reports">&#128196; Reports</button>
+  </nav>
+
+  <div class="sidebar-footer">
+    Storage:<br><strong id="storage-label">...</strong>
+  </div>
+</aside>
+
+<main class="content">
+  <div id="toast" class="toast hidden"></div>
+
+  <!-- ===================== OVERVIEW ===================== -->
+  <section id="page-overview" class="page active">
+    <h1>Class Overview</h1>
+
+    <div id="empty-banner" class="banner hidden">
+      No student data yet. Add students and marks, or
+      <button class="btn btn-small" id="load-sample-overview">load sample data</button>
+      to see how the dashboard works.
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-card"><span class="stat-label">Students</span><span class="stat-value" id="stat-students">0</span></div>
+      <div class="stat-card"><span class="stat-label">Subjects</span><span class="stat-value" id="stat-subjects">0</span></div>
+      <div class="stat-card"><span class="stat-label">Class average</span><span class="stat-value" id="stat-average">0%</span></div>
+      <div class="stat-card"><span class="stat-label">Pass percentage</span><span class="stat-value" id="stat-pass">0%</span></div>
+    </div>
+
+    <div class="two-col">
+      <div class="card">
+        <h2>Top performers</h2>
+        <div id="top-list"></div>
+      </div>
+      <div class="card">
+        <h2>Grade distribution</h2>
+        <div id="grade-bars"></div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="card">
+        <h2>Subject averages</h2>
+        <div id="subject-bars"></div>
+      </div>
+      <div class="card">
+        <h2>Needs attention</h2>
+        <p class="hint" id="attention-hint"></p>
+        <div id="attention-list"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== STUDENTS ===================== -->
+  <section id="page-students" class="page">
+    <h1>Students</h1>
+
+    <div class="card">
+      <h2>Register a student</h2>
+      <form id="student-form" class="form-row">
+        <label>Roll number
+          <input id="new-roll" placeholder="e.g. CU2501" maxlength="15" required>
+        </label>
+        <label>Full name
+          <input id="new-name" placeholder="e.g. Asha Rao" maxlength="40" required>
+        </label>
+        <button class="btn" type="submit">Add student</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <h2>All students</h2>
+        <input id="student-search" class="search" placeholder="Search by roll no. or name...">
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Roll No</th><th>Name</th><th>Subjects</th><th>Total</th><th>Percentage</th><th>Attendance</th><th>Grade</th><th>Rank</th><th>Actions</th></tr>
+          </thead>
+          <tbody id="student-rows"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SUBJECTS ===================== -->
+  <section id="page-subjects" class="page">
+    <h1>Subjects</h1>
+    <div class="card">
+      <h2>Add a subject</h2>
+      <form id="subject-form" class="form-row">
+        <label>Subject name
+          <input id="new-subject" placeholder="e.g. Programming in Java" maxlength="30" required>
+        </label>
+        <button class="btn" type="submit">Add subject</button>
+      </form>
+    </div>
+    <div class="card">
+      <h2>All subjects</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Subject</th><th>Students with marks</th><th>Actions</th></tr></thead>
+          <tbody id="subject-rows"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== ENTER MARKS ===================== -->
+  <section id="page-marks" class="page">
+    <h1>Enter Marks</h1>
+    <div class="card">
+      <p class="hint" id="marks-hint"></p>
+      <form id="marks-form">
+        <div class="form-row">
+          <label>Student
+            <select id="marks-student" required></select>
+          </label>
+          <label>Subject
+            <select id="marks-subject" required></select>
+          </label>
+        </div>
+        <div class="form-row">
+          <label>Assessment marks (0 - 70)
+            <input id="marks-assessment" type="number" min="0" max="70" step="0.5" required>
+          </label>
+          <label>Assignment score (0 - 20)
+            <input id="marks-assignment" type="number" min="0" max="20" step="0.5" required>
+          </label>
+          <label>Attendance % (0 - 100)
+            <input id="marks-attendance" type="number" min="0" max="100" step="0.5" required>
+          </label>
+          <button class="btn" type="submit">Save marks</button>
+        </div>
+      </form>
+      <p class="hint">Subject total (out of 100) = assessment (70) + assignment (20) + attendance marks (attendance % &divide; 10).
+        Selecting a student and subject that already have marks fills the form so you can correct them.</p>
+      <div id="marks-result" class="result hidden"></div>
+    </div>
+
+    <div class="card">
+      <h2 id="marks-table-title">Marks entered</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Subject</th><th>Assessment /70</th><th>Assignment /20</th><th>Attendance %</th><th>Total /100</th><th>Grade</th></tr></thead>
+          <tbody id="marks-rows"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== RANKING ===================== -->
+  <section id="page-ranking" class="page">
+    <h1>Class Ranking</h1>
+    <div class="card">
+      <p class="hint">Ranked by overall percentage. Students with the same percentage share a rank.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Rank</th><th>Roll No</th><th>Name</th><th>Total</th><th>Percentage</th><th>Grade</th></tr></thead>
+          <tbody id="ranking-rows"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SUBJECT SUMMARY ===================== -->
+  <section id="page-summary" class="page">
+    <h1>Subject-wise Summary</h1>
+    <div class="card">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Subject</th><th>Students</th><th>Average</th><th>Highest</th><th>Lowest</th><th>Pass %</th><th>Topper</th></tr></thead>
+          <tbody id="summary-rows"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== REPORTS ===================== -->
+  <section id="page-reports" class="page">
+    <h1>Reports</h1>
+    <div class="two-col">
+      <div class="card">
+        <h2>Class report</h2>
+        <p class="hint">Rank list, subject summary and grade distribution in one text file.</p>
+        <div class="button-row">
+          <button class="btn" id="preview-class">Preview</button>
+          <a class="btn btn-outline" id="download-class" href="/api/report/class?download=1">Download .txt</a>
+          <a class="btn btn-outline" id="download-csv" href="/api/export/ranking.csv?download=1">Ranking as CSV (Excel)</a>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Student report</h2>
+        <p class="hint">Marks, grades and attendance of one student.</p>
+        <div class="form-row">
+          <label>Student
+            <select id="report-student"></select>
+          </label>
+        </div>
+        <div class="button-row">
+          <button class="btn" id="preview-student">Preview</button>
+          <a class="btn btn-outline" id="download-student" href="#">Download .txt</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Preview</h2>
+      <pre id="report-preview" class="report-preview">Choose "Preview" to see a report here.</pre>
+    </div>
+
+    <div class="card">
+      <h2>Demo data</h2>
+      <p class="hint">Replaces all current data with 6 sample students and 4 subjects (useful for demonstrations).</p>
+      <button class="btn btn-danger" id="load-sample">Load sample data</button>
+    </div>
+  </section>
+</main>
+
+<!-- popup used to show one student's details -->
+<div id="modal" class="modal hidden">
+  <div class="modal-box">
+    <button class="modal-close" id="modal-close">&times;</button>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
